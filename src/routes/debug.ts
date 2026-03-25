@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import type { AppEnv } from '../types';
+import { resolveOpenAIApiKey } from '../ai-provider';
 import { findExistingMoltbotProcess, waitForProcess } from '../gateway';
 
 /**
@@ -341,7 +342,8 @@ debug.get('/ws-test', async (c) => {
 debug.get('/env', async (c) => {
   return c.json({
     has_anthropic_key: !!c.env.ANTHROPIC_API_KEY,
-    has_openai_key: !!c.env.OPENAI_API_KEY,
+    has_openai_key: !!resolveOpenAIApiKey(c.env),
+    has_codex_key: !!c.env.CODEX_API_KEY,
     has_gateway_token: !!c.env.MOLTBOT_GATEWAY_TOKEN,
     has_r2_access_key: !!c.env.R2_ACCESS_KEY_ID,
     has_r2_secret_key: !!c.env.R2_SECRET_ACCESS_KEY,

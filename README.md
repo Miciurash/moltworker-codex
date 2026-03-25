@@ -11,7 +11,7 @@ Run [OpenClaw](https://github.com/openclaw/openclaw) (formerly Moltbot, formerly
 ## Requirements
 
 - [Workers Paid plan](https://www.cloudflare.com/plans/developer-platform/) ($5 USD/month) — required for Cloudflare Sandbox containers. Running the container incurs additional compute costs; see [Container Cost Estimate](#container-cost-estimate) below for details.
-- [Anthropic API key](https://console.anthropic.com/) — for Claude access, or you can use AI Gateway's [Unified Billing](https://developers.cloudflare.com/ai-gateway/features/unified-billing/)
+- One AI provider credential: an [Anthropic API key](https://console.anthropic.com/), an OpenAI API key, or a Codex-generated OpenAI key. You can also use AI Gateway's [Unified Billing](https://developers.cloudflare.com/ai-gateway/features/unified-billing/).
 
 The following Cloudflare features used by this project have free tiers:
 - Cloudflare Access (authentication)
@@ -64,6 +64,12 @@ npm install
 
 # Set your API key (direct Anthropic access)
 npx wrangler secret put ANTHROPIC_API_KEY
+
+# Or use a direct OpenAI key
+# npx wrangler secret put OPENAI_API_KEY
+
+# Or paste a Codex-generated OpenAI key without renaming it
+# npx wrangler secret put CODEX_API_KEY
 
 # Or use Cloudflare AI Gateway instead (see "Optional: Cloudflare AI Gateway" below)
 # npx wrangler secret put CLOUDFLARE_AI_GATEWAY_API_KEY
@@ -378,7 +384,7 @@ All three are required. OpenClaw constructs the gateway URL from the account ID 
 npm run deploy
 ```
 
-When Cloudflare AI Gateway is configured, it takes precedence over direct `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`.
+When Cloudflare AI Gateway is configured, it takes precedence over direct `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, or `CODEX_API_KEY`.
 
 ### Choosing a Model
 
@@ -398,7 +404,7 @@ This works with any [AI Gateway provider](https://developers.cloudflare.com/ai-g
 | Anthropic | `anthropic/claude-sonnet-4-5` | Anthropic API key |
 | Groq | `groq/llama-3.3-70b` | Groq API key |
 
-**Note:** `CLOUDFLARE_AI_GATEWAY_API_KEY` must match the provider you're using — it's your provider's API key, forwarded through the gateway. You can only use one provider at a time through the gateway. For multiple providers, use direct keys (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`) alongside the gateway config.
+**Note:** `CLOUDFLARE_AI_GATEWAY_API_KEY` must match the provider you're using — it's your provider's API key, forwarded through the gateway. You can only use one provider at a time through the gateway. For multiple providers, use direct keys (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, or `CODEX_API_KEY`) alongside the gateway config.
 
 #### Workers AI with Unified Billing
 
@@ -418,7 +424,8 @@ The previous `AI_GATEWAY_API_KEY` + `AI_GATEWAY_BASE_URL` approach is still supp
 | `CF_AI_GATEWAY_MODEL` | No | Override default model: `provider/model-id` (e.g. `workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast`). See [Choosing a Model](#choosing-a-model) |
 | `ANTHROPIC_API_KEY` | Yes* | Direct Anthropic API key (alternative to AI Gateway) |
 | `ANTHROPIC_BASE_URL` | No | Direct Anthropic API base URL |
-| `OPENAI_API_KEY` | No | OpenAI API key (alternative provider) |
+| `OPENAI_API_KEY` | No | Direct OpenAI API key (alternative provider). Takes precedence over `CODEX_API_KEY` if both are set |
+| `CODEX_API_KEY` | No | Convenience alias for `OPENAI_API_KEY` when you're using a Codex-generated OpenAI key |
 | `AI_GATEWAY_API_KEY` | No | Legacy AI Gateway API key (deprecated, use `CLOUDFLARE_AI_GATEWAY_API_KEY` instead) |
 | `AI_GATEWAY_BASE_URL` | No | Legacy AI Gateway endpoint URL (deprecated) |
 | `CF_ACCESS_TEAM_DOMAIN` | Yes* | Cloudflare Access team domain (required for admin UI) |
